@@ -39,7 +39,7 @@ The weather-aware policy turns away more callers than the 25% reserve on average
 5. **Baselines.** Fill every open slot, and hold 25% of capacity for emergencies, both choosing plays in order of expected value per call.
 6. **Backtest.** Each winter day is a board snapshot. Policies plan on a forecast (actual temperature plus 1.5 / 2.5 / 3.5°F Gaussian error for the three days) and are scored on 40 simulated outcomes using the actual temperature, with common random numbers for inbound demand.
 
-The app (static HTML/CSS/ES modules) recomputes the plan live for today's real Open-Meteo forecast or any replayed winter day, and lets you change the assumptions (ticket values, loss share, call cost, call budget), launch or pause plays (saved in localStorage), drill into any cell, and export the plan (CSV/JSON) and backtest (CSV).
+The app (static HTML/CSS/ES modules) recomputes the plan live for today's Open-Meteo forecast (fetched in the browser on load, with the committed Nov 11 snapshot as the offline fallback) or any replayed winter day, and lets you change the assumptions (ticket values, loss share, call cost, call budget), launch or pause plays (saved in localStorage), drill into any cell, and export the plan (CSV/JSON) and backtest (CSV).
 
 ## Run it
 
