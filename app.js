@@ -30,11 +30,11 @@ function route() {
 function dateOptions() {
   const coldest = RESULTS.days.slice().sort((a, b) => a.temps[1] - b.temps[1]).slice(0, 6);
   const mild = RESULTS.days.filter((d) => d.temps[1] >= 45).slice(0, 2);
-  return [{ id: "today", label: `Today · ${DAYNAME(BOARD.today.date)} (forecast)` },
+  return [{ id: "today", label: `Today · ${DAYNAME(BOARD.today.date)} (${BOARD.today.kind.startsWith("Live") ? "live forecast" : "forecast"})` },
     ...[...coldest, ...mild].sort((a, b) => a.date.localeCompare(b.date)).map((d) => ({ id: d.date, label: `${DAYNAME(d.date)}, ${d.date.slice(0, 4)} · ${Math.round(d.temps[1])}°F next day` }))];
 }
 function snapshot(dateId) {
-  if (dateId === "today" || !dateId) return { id: "today", date: BOARD.today.date, dates: BOARD.today.dates, temps: BOARD.today.temps, mins: BOARD.today.mins, maxs: BOARD.today.maxs, kind: "Real Open-Meteo forecast, fetched Nov 11, 2026" };
+  if (dateId === "today" || !dateId) return { id: "today", date: BOARD.today.date, dates: BOARD.today.dates, temps: BOARD.today.temps, mins: BOARD.today.mins, maxs: BOARD.today.maxs, kind: BOARD.today.kind };
   const i = BOARD.history.findIndex((h) => h[0] === dateId);
   if (i < 0 || i + 2 >= BOARD.history.length) return null;
   const hs = [0, 1, 2].map((k) => BOARD.history[i + k]);
@@ -370,6 +370,19 @@ async function boot() {
     const [c, b, r] = await Promise.all(["data/config.json", "data/board.json", "results/results.json"].map((u) => fetch(u)));
     if (!c.ok || !b.ok || !r.ok) throw new Error("data request failed");
     CONFIG = await c.json(); BOARD = await b.json(); RESULTS = await r.json();
+    BOARD.today.kind = "Real Open-Meteo forecast, snapshot fetched Nov 11, 2026";
+    try {
+      // Re-plan on the live forecast when Open-Meteo is reachable (free, no key, CORS-enabled).
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 2500);
+      const f = await fetch("https://api.open-meteo.com/v1/forecast?latitude=40.7608&longitude=-111.891&daily=temperature_2m_min,temperature_2m_mean,temperature_2m_max&timezone=America%2FDenver&temperature_unit=fahrenheit&forecast_days=3", { signal: ctl.signal });
+      clearTimeout(tm);
+      if (f.ok) {
+        const d = (await f.json()).daily;
+        if (d && d.time && d.time.length >= 3 && d.temperature_2m_mean.every((x) => typeof x === "number")) {
+          BOARD.today = { date: d.time[0], dates: d.time.slice(0, 3), temps: d.temperature_2m_mean.slice(0, 3), mins: d.temperature_2m_min.slice(0, 3), maxs: d.temperature_2m_max.slice(0, 3), kind: "Live Open-Meteo forecast" };
+        }
+      }
+    } catch (e) { /* offline: keep the committed forecast snapshot */ }
     last = location.hash.split("?")[0];
     render();
   } catch (err) {
