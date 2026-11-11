@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Board · Broccoli</title>
+<meta name="description" content="Weather-aware autofill for the Broccoli Board: unofficial concept demo by Mohith Gajjela.">
+<link rel="icon" href="assets/broccoli-mark.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar" aria-label="App navigation">
+    <div class="sb-head">
+      <button class="org-btn" type="button" title="Organization switcher is not part of this demo" aria-label="Organization: Wasatch Home Services">
+        <img src="assets/broccoli-mark.png" alt="">
+        <span><span class="t">Wasatch Home Services</span><br><span class="s">Salt Lake City, UT</span></span>
+        <i data-lucide="chevrons-up-down"></i>
+      </button>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">Workspace</div>
+      <ul class="sb-menu">
+        <li><a href="#/dashboard" data-nav="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</a></li>
+        <li><a href="#/calls" data-nav="calls"><i data-lucide="phone"></i>Calls</a></li>
+        <li><a href="#/board" data-nav="board"><i data-lucide="calendar-range"></i>Board<span class="tag">Autofill</span></a></li>
+        <li><a href="#/customers" data-nav="customers"><i data-lucide="users"></i>Customers</a></li>
+        <li><a href="#/issues" data-nav="issues"><i data-lucide="circle-alert"></i>Issues</a></li>
+        <li><a href="#/analytics" data-nav="analytics"><i data-lucide="chart-line"></i>Analytics</a></li>
+      </ul>
+    </div>
+    <div class="sb-group">
+      <div class="sb-label">Agents</div>
+      <ul class="sb-menu">
+        <li><a href="#/inbound" data-nav="inbound"><i data-lucide="phone-incoming"></i>Inbound</a></li>
+        <li><a href="#/outbound" data-nav="outbound"><i data-lucide="phone-outgoing"></i>Outbound</a></li>
+        <li><a href="#/speed-to-lead" data-nav="speed-to-lead"><i data-lucide="zap"></i>Speed to Lead</a></li>
+        <li><a href="#/qa" data-nav="qa"><i data-lucide="badge-check"></i>QA &amp; Coaching</a></li>
+      </ul>
+    </div>
+    <div class="sb-foot">
+      <ul class="sb-menu"><li><a href="#/settings" data-nav="settings"><i data-lucide="settings"></i>Settings</a></li></ul>
+      <div class="user"><span class="av">MG</span><span><span class="t">Mohith Gajjela</span><br><span class="s">Demo user</span></span></div>
+    </div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" type="button" aria-label="Toggle sidebar" title="Sidebar toggle is not part of this demo"><i data-lucide="panel-left"></i></button>
+      <span class="vsep"></span>
+      <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+      <div class="right"><button class="btn btn-ghost btn-sm" id="kbdHelp" type="button" aria-label="Keyboard shortcuts"><i data-lucide="keyboard"></i><span class="kbd">?</span></button></div>
+    </header>
+    <main class="content" id="app" tabindex="-1">
+      <div class="skel" style="height:26px;width:160px;margin-bottom:10px"></div>
+      <div class="skel" style="height:18px;width:520px;margin-bottom:22px"></div>
+      <div class="skel" style="height:90px;margin-bottom:14px"></div>
+      <div class="skel" style="height:340px"></div>
+    </main>
+    <footer class="footer">Unofficial concept demo by Mohith Gajjela. Not affiliated with Broccoli AI. Real public data: Open-Meteo temperatures (Salt Lake City, New York) and NYC 311 heat complaints; plays and conversion rates are Broccoli's own templates; the company, its capacity, audiences and ticket values are synthetic.</footer>
+  </div>
+</div>
+<div id="overlay"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

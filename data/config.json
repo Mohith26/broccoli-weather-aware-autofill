@@ -1,0 +1,31 @@
+{
+  "company": "Wasatch Home Services",
+  "note": "Fictional multi-trade company in Salt Lake City used for the demo. Capacity, audiences, values and booked shares are assumptions; the plays and their expected conversion rates are Broccoli's own board play templates.",
+  "city": "Salt Lake City, UT",
+  "timezone": "America/Denver",
+  "rows": [
+    { "id": "hvac", "label": "HVAC Service", "capacity": 42, "techs": 14, "inboundBase": 9, "weatherStrength": 1.0, "inboundValue": 520,
+      "audience": { "member_service_due": 260, "open_estimate_handoff": 90, "canceled_job_rebooking": 25, "recent_inbound_no_book": 60, "same_trade_overdue": 900 } },
+    { "id": "plumbing", "label": "Plumbing Service", "capacity": 27, "techs": 9, "inboundBase": 7.5, "weatherStrength": 0.5, "inboundValue": 430,
+      "audience": { "member_service_due": 120, "open_estimate_handoff": 60, "canceled_job_rebooking": 15, "recent_inbound_no_book": 40, "same_trade_overdue": 600 } },
+    { "id": "electrical", "label": "Electrical Service", "capacity": 15, "techs": 5, "inboundBase": 5.5, "weatherStrength": 0.0, "inboundValue": 380,
+      "audience": { "member_service_due": 60, "open_estimate_handoff": 30, "canceled_job_rebooking": 8, "recent_inbound_no_book": 20, "same_trade_overdue": 300 } }
+  ],
+  "dayShare": [0.7, 0.9, 0.55],
+  "bookedShare": [0.8, 0.55, 0.35],
+  "plays": [
+    { "id": "open_estimate_handoff", "name": "Open-estimate handoff", "rate": 0.10, "value": 600 },
+    { "id": "recent_inbound_no_book", "name": "Recent inbound no-book", "rate": 0.12, "value": 340 },
+    { "id": "canceled_job_rebooking", "name": "Canceled-job rebooking", "rate": 0.15, "value": 320 },
+    { "id": "same_trade_overdue", "name": "Same-trade overdue service", "rate": 0.05, "value": 190 },
+    { "id": "member_service_due", "name": "Active member service due", "rate": 0.12, "value": 150 }
+  ],
+  "assumptions": {
+    "inboundValues": { "hvac": 520, "plumbing": 430, "electrical": 380 },
+    "playValues": { "open_estimate_handoff": 600, "recent_inbound_no_book": 340, "canceled_job_rebooking": 320, "same_trade_overdue": 190, "member_service_due": 150 },
+    "lossShare": 0.6,
+    "costPerCall": 0.35,
+    "callBudget": 1200,
+    "forecastErrorF": [1.5, 2.5, 3.5]
+  }
+}
