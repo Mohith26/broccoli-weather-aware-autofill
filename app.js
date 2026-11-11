@@ -371,6 +371,8 @@ async function boot() {
     if (!c.ok || !b.ok || !r.ok) throw new Error("data request failed");
     CONFIG = await c.json(); BOARD = await b.json(); RESULTS = await r.json();
     BOARD.today.kind = "Real Open-Meteo forecast, snapshot fetched Nov 11, 2026";
+    last = location.hash.split("?")[0];
+    render();
     try {
       // Re-plan on the live forecast when Open-Meteo is reachable (free, no key, CORS-enabled).
       const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 2500);
@@ -380,11 +382,11 @@ async function boot() {
         const d = (await f.json()).daily;
         if (d && d.time && d.time.length >= 3 && d.temperature_2m_mean.every((x) => typeof x === "number")) {
           BOARD.today = { date: d.time[0], dates: d.time.slice(0, 3), temps: d.temperature_2m_mean.slice(0, 3), mins: d.temperature_2m_min.slice(0, 3), maxs: d.temperature_2m_max.slice(0, 3), kind: "Live Open-Meteo forecast" };
+          cache.clear();
+          if (!overlay.innerHTML) render();
         }
       }
     } catch (e) { /* offline: keep the committed forecast snapshot */ }
-    last = location.hash.split("?")[0];
-    render();
   } catch (err) {
     console.error(err);
     app.innerHTML = `<div class="alert alert-red" role="alert"><i data-lucide="circle-alert"></i><div><b>Could not load the board.</b> ${esc(err.message)}.</div><div class="actions"><button class="btn btn-sm" type="button" onclick="location.reload()">Retry</button></div></div>`;
