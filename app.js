@@ -107,11 +107,13 @@ function viewBoard(params) {
     </div>
     <section class="card" aria-label="Board">
       <div class="wx">
-        <div class="lab">${esc(CONFIG.city)}<br><span class="ink3" style="font-size:11.5px">${snap.id === "today" ? "Forecast" : "Actual"}</span></div>
+        <div class="lab"><div style="display:flex;justify-content:space-between;font-size:12px"><span>Board filled</span><b class="num" style="color:var(--bui-ink)">${pct((P.rows.reduce((s, r) => s + r.booked, 0) + P.totals.outboundBooked) / P.rows.reduce((s, r) => s + r.capacity, 0), 0)}</b></div>
+          <div style="height:6px;border-radius:99px;background:var(--bui-field);margin:5px 0 6px;overflow:hidden"><div style="height:100%;width:${pct((P.rows.reduce((s, r) => s + r.booked, 0) + P.totals.outboundBooked) / P.rows.reduce((s, r) => s + r.capacity, 0), 1)};background:var(--board-booked);border-radius:99px"></div></div>
+          <span class="ink3" style="font-size:11.5px">${esc(CONFIG.city)} · ${snap.id === "today" ? "forecast" : "actual"}</span></div>
         ${snap.dates.map((d, k) => `<div class="day"><span class="ico"><i data-lucide="${wxIcon(snap.temps[k])}"></i></span><div><div class="d1">${k === 0 ? "Today" : k === 1 ? "Tomorrow" : DAYNAME(d).split(",")[0]} · ${DAYNAME(d).split(", ")[1]}</div><div class="d2">${Math.round(snap.mins[k])}° to ${Math.round(snap.maxs[k])}°F · inbound ×${multiplier(BOARD.fit, snap.temps[k], 1).toFixed(2)}</div></div></div>`).join("")}
       </div>
       <div class="board" role="grid" aria-label="Business units by day">
-        ${CONFIG.rows.map((row) => `<div class="rowh" role="rowheader"><span class="t">${esc(row.label)}</span><span class="s">${row.techs} techs · ${row.capacity} slots/day</span></div>
+        ${CONFIG.rows.map((row) => `<div class="rowh" role="rowheader"><span class="t">${esc(row.label)}</span><span class="s">${row.techs} techs · ${row.capacity}/day</span></div>
           ${[0, 1, 2].map((d) => { const r = P.rows.find((x) => x.row === row.id && x.day === d); return `<button class="cell" role="gridcell" type="button" data-cell="${row.id}/${d}" aria-label="${esc(row.label)} ${d === 0 ? "today" : d === 1 ? "tomorrow" : "day after"}: ${r.open} open, ${n0(r.ev.calls)} calls, ${n1(r.inboundMean)} inbound expected">
             <div class="top"><b>${r.open}</b> open of ${r.capacity}<span class="calls">${n0(r.ev.calls)} calls</span></div>
             ${slotStrip(r)}
@@ -171,7 +173,7 @@ function viewCell(rowId, d, params) {
   const x = (k) => L + k * bw;
   const chart1 = `<svg class="chart" viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Distribution of inbound demand still to come">
     ${[0, 0.5, 1].map((f) => `<line class="gl" x1="${L}" x2="${W - Rm}" y1="${T + (1 - f) * (H - T - B)}" y2="${T + (1 - f) * (H - T - B)}"/><text x="${L - 6}" y="${T + (1 - f) * (H - T - B) + 4}" text-anchor="end">${pct(f * ymax, 0)}</text>`).join("")}
-    ${pmf.map((p, k) => `<rect x="${x(k) + 1}" y="${T + (1 - p / ymax) * (H - T - B)}" width="${Math.max(1, bw - 2)}" height="${(p / ymax) * (H - T - B)}" rx="2" fill="${k <= leftForInbound ? "hsl(var(--booked) / .55)" : "hsl(var(--unbooked) / .8)"}"/>`).join("")}
+    ${pmf.map((p, k) => `<rect x="${x(k) + 1}" y="${T + (1 - p / ymax) * (H - T - B)}" width="${Math.max(1, bw - 2)}" height="${(p / ymax) * (H - T - B)}" rx="2" fill="${k <= leftForInbound ? "rgb(105 153 9 / .6)" : "hsl(var(--unbooked) / .8)"}"/>`).join("")}
     <line x1="${x(leftForInbound + 1)}" x2="${x(leftForInbound + 1)}" y1="${T - 4}" y2="${H - B}" stroke="var(--bui-ink)" stroke-dasharray="4 3"/>
     <text x="${x(leftForInbound + 1) + 4}" y="${T + 8}" style="fill:var(--bui-ink)">${n1(leftForInbound)} slots left for inbound</text>
     ${[0, Math.round(max / 4), Math.round(max / 2), Math.round((3 * max) / 4), max].map((k) => `<text x="${x(k) + bw / 2}" y="${H - B + 16}" text-anchor="middle">${k}</text>`).join("")}
@@ -204,7 +206,7 @@ function viewCell(rowId, d, params) {
     </div>
     <div class="grid2" style="grid-template-columns:1fr 1fr;margin-top:0">
       <section class="card"><div class="card-h"><h3>Inbound still to come</h3><span class="sub">Negative binomial, mean ${n1(r.inboundMean)}</span></div><div class="card-b">${chart1}
-        <p class="note">Purple: callers who still find a slot after this policy's outbound bookings. Orange: callers who would be turned away; ${pct(assumptions().lossShare, 0)} of them call a competitor.</p></div></section>
+        <p class="note">Green: callers who still find a slot after this policy's outbound bookings. Orange: callers who would be turned away; ${pct(assumptions().lossShare, 0)} of them call a competitor.</p></div></section>
       <section class="card"><div class="card-h"><h3>Is one more tune-up worth it?</h3></div><div class="card-b">${chart2}
         <p class="note">Each tune-up earns ${usd(cheap.value)} but can take a slot a ${usd(r.inboundValue)} repair caller needed. The curve peaks where the chance that inbound fills the next slot drops below ${pct(cheap.value / (r.inboundValue * assumptions().lossShare), 0)}, Littlewood's rule.</p></div></section>
     </div>
